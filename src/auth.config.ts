@@ -1,4 +1,4 @@
-import ThirdParty from 'supertokens-node/recipe/thirdparty';
+// import ThirdParty from 'supertokens-node/recipe/thirdparty';
 import EmailPassword from 'supertokens-node/recipe/emailpassword';
 import Passwordless from 'supertokens-node/recipe/passwordless';
 import Session from 'supertokens-node/recipe/session';
@@ -7,7 +7,7 @@ import UserRoles from 'supertokens-node/recipe/userroles';
 import 'dotenv/config';
 
 export const appInfo = {
-    appName: 'Dream',
+    appName: 'Aeternus ',
     apiDomain: process.env.API_DOMAIN,
     websiteDomain: process.env.WEBSITE_DOMAIN,
     apiBasePath: '/auth',

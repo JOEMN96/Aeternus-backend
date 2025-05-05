@@ -1,0 +1,48 @@
+services:
+    # app:
+    #     container_name: aeternus-backend
+    #     image: nest-app
+    #     build:
+    #         context: .
+    #         dockerfile: Dockerfile
+    #     volumes:
+    #         - .:/app
+    #         - /app/node_modules
+    #     env_file:
+    #         - .env
+    #     ports:
+    #         - '3001:3001'
+    #     depends_on:
+    #         - db
+    #     command: npm run start:dev
+    db:
+        image: postgres:latest
+        restart: always
+        container_name: aeternus-db
+        env_file:
+            - .env
+        environment:
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+            POSTGRES_DB: ${DB_NAME}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - '5432:5432'
+
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        container_name: aeternus-pg-admin
+        env_file:
+            - .env
+        environment:
+            - PGADMIN_DEFAULT_EMAIL=${DB_USERNAME}
+            - PGADMIN_DEFAULT_PASSWORD=${DB_PASSWORD}
+        ports:
+            - '5050:80'
+        depends_on:
+            - db
+
+volumes:
+    postgres_data: {}
