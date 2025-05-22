@@ -4,6 +4,7 @@ import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './auth/auth.filter';
 import * as SuperTokensConfig from './auth.config';
 import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './lib/filters/http-exception.filter';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -14,6 +15,7 @@ async function bootstrap() {
     });
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalFilters(new SupertokensExceptionFilter());
+    app.useGlobalFilters(new HttpExceptionFilter());
     await app.listen(3001);
 }
 bootstrap();
