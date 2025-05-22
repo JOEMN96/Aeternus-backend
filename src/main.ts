@@ -4,10 +4,13 @@ import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './auth/auth.filter';
 import * as SuperTokensConfig from './auth.config';
 import { ValidationPipe } from '@nestjs/common';
-import { HttpExceptionFilter } from './lib/filters/http-exception.filter';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { WinstonLogger } from './config/winston.logger';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, {
+        logger: new WinstonLogger(),
+    });
     app.enableCors({
         origin: [SuperTokensConfig.appInfo.websiteDomain],
         allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
