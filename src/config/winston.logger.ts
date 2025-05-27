@@ -1,13 +1,15 @@
 import * as winston from 'winston';
 import * as path from 'path';
-import { LoggerService, Injectable } from '@nestjs/common';
+import { LoggerService, Injectable, ConsoleLogger } from '@nestjs/common';
 import 'winston-daily-rotate-file';
 
 Injectable();
-export class WinstonLogger implements LoggerService {
+export class WinstonLogger extends ConsoleLogger implements LoggerService {
     private readonly logger: winston.Logger;
 
-    constructor() {
+    constructor(context?: string) {
+        super();
+        this.setContext(context);
         const logDir = path.join(process.cwd(), 'logs');
 
         const isDev = process.env.NODE_ENV !== 'production';
@@ -86,7 +88,9 @@ export class WinstonLogger implements LoggerService {
     }
 
     http(message: string) {
-        this.logger.http(message);
+        console.log(this.context);
+
+        this.logger.http(this.context + ': ' + message);
     }
 
     silly(message: string) {

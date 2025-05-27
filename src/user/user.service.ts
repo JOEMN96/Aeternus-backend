@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { Http } from 'winston/lib/winston/transports';
 
 @Injectable()
 export class UserService {
@@ -19,23 +20,19 @@ export class UserService {
 
     async createNewUser(createUserDto: CreateUserDto, userId: string): Promise<User> {
         const { first_name, last_name, dob, city, gender } = createUserDto;
-        try {
-            const existingUser = await this.getUserByUserId(userId);
-            if (existingUser) {
-                throw new HttpException('User Account already exists', HttpStatus.CONFLICT);
-            }
-            const newUser = this.usersRepository.create({
-                userId,
-                first_name,
-                last_name,
-                dob,
-                city,
-                gender,
-            });
-            return await this.usersRepository.save(newUser);
-        } catch (error) {
-            throw new HttpException('Failed to create user', HttpStatus.INTERNAL_SERVER_ERROR);
+        const existingUser = await this.getUserByUserId(userId);
+        if (existingUser) {
+            throw new HttpException('User Account already exists', HttpStatus.CONFLICT);
         }
+        const newUser = this.usersRepository.create({
+            userId,
+            first_name,
+            last_name,
+            dob,
+            city,
+            gender,
+        });
+        return await this.usersRepository.save(newUser);
     }
 
     async updateUser(updateUserDto: UpdateUserDto, userId: string): Promise<User | null> {
@@ -44,7 +41,7 @@ export class UserService {
             await this.usersRepository.update({ userId }, updateData);
             return this.getUserByUserId(userId);
         } catch (error) {
-            return null;
+            throw new HttpException('Unable to update user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

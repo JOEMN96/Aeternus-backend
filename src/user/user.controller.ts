@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Session } from 'supertokens-nestjs';
 import { SessionContainer } from 'supertokens-node/recipe/session';
@@ -24,8 +24,8 @@ export class UserController {
         return user;
     }
 
-    @Put('/')
-    updateUser(@Session() session: SessionContainer, schema: UpdateUserDto) {
+    @Patch('/')
+    updateUser(@Body() schema: UpdateUserDto, @Session() session: SessionContainer) {
         const userId = session.getUserId();
         const user = this.userService.updateUser(schema, userId);
         return user;

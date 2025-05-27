@@ -3,7 +3,7 @@ import { AppModule } from './app.module';
 import supertokens from 'supertokens-node';
 import { SupertokensExceptionFilter } from './auth/auth.filter';
 import * as SuperTokensConfig from './auth.config';
-import { ValidationPipe } from '@nestjs/common';
+import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { WinstonLogger } from './config/winston.logger';
 
@@ -16,9 +16,23 @@ async function bootstrap() {
         allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
         credentials: true,
     });
-    app.useGlobalPipes(new ValidationPipe());
-    app.useGlobalFilters(new SupertokensExceptionFilter());
     app.useGlobalFilters(new HttpExceptionFilter());
+
+    app.useGlobalPipes(
+        new ValidationPipe({
+            transform: true,
+            whitelist: true,
+            exceptionFactory: (errors) => {
+                const result = errors.map((error) => ({
+                    property: error.property,
+                    message: error.constraints[Object.keys(error.constraints)[0]],
+                }));
+                return new UnprocessableEntityException(result);
+            },
+        }),
+    );
+
+    app.useGlobalFilters(new SupertokensExceptionFilter());
     await app.listen(3001);
 }
 bootstrap();
