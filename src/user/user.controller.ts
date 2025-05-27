@@ -4,6 +4,7 @@ import { Session } from 'supertokens-nestjs';
 import { SessionContainer } from 'supertokens-node/recipe/session';
 import { UserService } from './user.service';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { ApiCookieAuth } from '@nestjs/swagger';
 
 @Controller('user')
 @UseGuards(new AuthGuard())
@@ -18,6 +19,7 @@ export class UserController {
     }
 
     @Get('/')
+    @ApiCookieAuth('')
     getUser(@Session() session: SessionContainer) {
         const userId = session.getUserId();
         const user = this.userService.getUserByUserId(userId);

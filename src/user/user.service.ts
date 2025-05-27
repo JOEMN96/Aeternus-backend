@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto, UpdateUserDto } from './user.dto';
-import { Http } from 'winston/lib/winston/transports';
 
 @Injectable()
 export class UserService {
@@ -41,6 +40,7 @@ export class UserService {
             await this.usersRepository.update({ userId }, updateData);
             return this.getUserByUserId(userId);
         } catch (error) {
+            Logger.error('Error updating user:', error);
             throw new HttpException('Unable to update user', HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

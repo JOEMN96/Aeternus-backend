@@ -6,6 +6,7 @@ import * as SuperTokensConfig from './auth.config';
 import { UnprocessableEntityException, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { WinstonLogger } from './config/winston.logger';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -33,6 +34,11 @@ async function bootstrap() {
     );
 
     app.useGlobalFilters(new SupertokensExceptionFilter());
+
+    const config = new DocumentBuilder().setTitle('API Docs').setDescription('Project API description').setVersion('1.0').addTag('BE').build();
+    const documentFactory = () => SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, documentFactory);
+
     await app.listen(3001);
 }
 bootstrap();

@@ -5,6 +5,7 @@ import { SessionContainer } from 'supertokens-node/recipe/session';
 import { Session } from './session/session.decorator';
 import { AuthService } from './auth.service';
 import { PublicAccess } from 'supertokens-nestjs';
+import { ApiBody } from '@nestjs/swagger';
 
 @Controller('/auth')
 export class AuthController {
@@ -14,6 +15,7 @@ export class AuthController {
 
     @Post('/signup')
     @PublicAccess()
+    @ApiBody({ schema: { type: 'object', properties: { email: { type: 'string' }, password: { type: 'string' } } } })
     async login(@Body() body: loginDto) {
         let { email, password } = body;
         return await this.authService.signUpWithEmailPassword(email, password);
